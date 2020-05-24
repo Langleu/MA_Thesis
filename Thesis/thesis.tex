@@ -1,0 +1,37 @@
+
+\input{layout.tex}
+
+% Front Matter
+
+\newcommand{\titleLineOne}{Title}
+\newcommand{\titleLineTwo}{ subtitle}
+\newcommand{\titleLineThree}{}
+\newcommand{\documentdate}{\today}
+\newcommand{\studentname}{Max Mustermann}
+\newcommand{\abstracttextde}{Kurze Zusammenfassung der Arbeit in 250 W\"ortern.}
+\newcommand{\abstracttext}{Short version of the thesis in 250 words.}
+\newcommand{\acktext}{This chapter is optional. First of all, I would like to...}
+
+\begin{document} 
+
+\input{frontmatter.tex}
+
+% Body Matter (use input to add chapters)
+
+\input{sections/introduction.tex}
+
+\input{sections/background.tex}
+
+\input{sections/contribution.tex}
+
+\input{sections/results.tex}
+
+\input{sections/stateoftheart.tex}
+
+\input{sections/conclusion.tex}
+
+% Back Matter (use input to add appendices, if really needed)
+
+\input{bib.tex}
+
+\end{document}

@@ -1,6 +1,6 @@
 \chapter{Contribution}
 
-This chapter is divided into multiple sections, which cover the architecture and the expandability of the implementation. The architecture is split into subsections covering the various components that were implemented throughout the thesis.
+This chapter is divided into multiple sections, which cover the architecture and the expandability of the implementation. The architecture is split into subsections covering the various components that were implemented throughout the thesis. Overall it should give the reader an understanding of the motivation and decisions done to implement the requirements.
 
 %Most important chapter of the thesis. Describes what the author contributes as research. Discusses intuition, motivation, describes and reasons about necessity of proposed elements. Defines theses based on reasonable assumptions. Discusses relevant aspects of contribution. Approximately 30 to 40 pages. Can be split into multiple chapters.
 
@@ -17,6 +17,43 @@ Services itself can be clustered into the "Distributed Crawler", "Distributed An
     \caption{Architectural representation of the system as a whole}
     \label{fig:architecture}
 \end{figure}
+
+\subsection{Database - Grakn.ai}
+One of the fundamental decisions is which database to select as a lot of other components will have to build upon it. From the beginning on it was clear that for building a knowledge graph some sort of graph database could be utilized as it will clearly show the relations of all entities and help in building a recommender system due to the sheer amount of data in the graph.
+The implementation could have been done with a NoSQL or a classical SQL database as well, but would have required more linking of data to represent the same sort of result using a graph database.
+
+The first candidate for a graph database that comes to mind is neo4j\footnote{https://neo4j.com}, which is one of the older ones publicly released in 2007\todo{quote https://neo4j.com/developer/graph-database/\#neo4j-overview}. While neo4j could have been used for the implementation, it felt quite outdated when it came to the data representation and their query language "Cypher". Therefore the graph database Grakn\footnote{https://grakn.ai} was used, which was released in 2016\todo{quote source }.
+
+Grakn describes itself as a knowledge graph engine to organize complex networks of data and making it queryable, by performing knowledge engineering\todo{quote https://grakn.ai/grakn-core}. It fully supports the Entity-Relationship model and comes along with a query language called Graql. 
+
+\todo{Deduplication}
+\subsubsection{Entity-Relationship model}
+Entity-Relationship models are the de facto standard to represent a schema for a graph database.
+\todo{redo er model}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.2\paperwidth,height=1.2\paperheight,keepaspectratio,angle=270]{graphics/er_database.png}
+    \caption{Entity-Relationship model}
+    \label{fig:er_model}
+\end{figure}
+
+Deployment Scripts do not follow a standard and therefore a generalized model has to be created that possibly fit most of them. The focus was lying on the deployment as this entity represents the script itself as a whole. Followed by services that are defined in the deployment script and therefore have a direct relationship to the deployment. Services can occur unlimited times in a deployment, but one service can always only have one deployment. This was kept this way as services, depending on the context you are in, can be differently defined when it comes to versions or extra attributes, but as we are dealing with a graph database searching for possibly best fits will still work easy as one has the direct relationship between services and its deployment.
+Services can depend on itself as well, meaning that those are more coupled than others, e.g. a database and a backend for example. Once more this depends highly on the context one is in and will be part of another section in this chapter. \todo{e.g. kustomize, kuberentes, helm, docker-compose fit this schema}
+As the deployment script is usually embedded in a repository a coupling is happening there as well. The repository could represent in a classical way a repository on either GitHub or Bitbucket, but could also be a website or documentation depending on where it was found. One repository can hold an unlimited amount of deployment scripts and one can possibly belong to multiple repositories. The simple explanation is that the secure hash algorithm is used as key identification and files that have the same content will therefore have relationships added to those repositories as well, while still keeping only one deployment entity in the database. The last entity in the schema is a user that owns unlimited repositories, while one repository can only belong to one user.
+
+One of the favorable aspects of Grakn is how it handles duplicates. As long as one defines unique keys in the attributes of an entity there will not be a duplicate as those will automatically be dropped on insertion. This will keep the database free from duplicates and allows one to concentrate on the actual implementation of their use case.
+
+The schema is kept general in regards to the domain of different kinds of deployment scripts while overall favouring the origin from code repositories. A visualization of the schema can be seen in figure \ref{fig:er_model} and gives a self explanatory overview according to current standards in ER models.
+
+\subsubsection{Open Source Contributions}
+Grakn is still quite a new graph database due to which the community around it is still rather small and problems that have been solved for others still have to covered for this one. Therefore some contributions to the project around Grakn and its tools have been covered in the implementation of this thesis.
+
+First of all Grakn comes along with tool called workbase, which is essentially an editor to show and edit the graph that the database contains. This is sufficient for most projects where the graph is rather small. The workbase is a Vue/React application wrapped in electron, which is a framework to create desktop applications from JavaScript. Therefore electron is wrapping the files with chromium and node.js to display the application cross platform. The workbase comes along with some flaws as graphs with nodes and edges in the 100.000 area will crash the application due to the limited amount of memory assigned to the chromium process and even in the area of 10.000 and more the application starts to stutter under the heavy load.
+
+Therefore the first contribution in the domain of Grakn is a converter from Grakn to the the Graph Exchange XML Format (GEXF), which is essentially a file format to describe complex networks structures.
+\todo{e.g. own tooling for
+creating gexf compatible graphs - Limitations of provided tools (electron)}
+\todo{e.g. own tooling for seeding the db model}
 
 \subsection{Distributed Crawler}
 First and foremost the main part of the implementation is the so-called "distributed crawler", which follows the master and node pattern, where one entity is the master that controls the spawned nodes. In this thesis, it can also be seen as orchestrator/information funnel and the crawling/processing unit. The reason for calling it a distributed crawler is that the overall function of this implementation can be seen as a crawler and distributed in the sense that the nodes can be distributed across multiple data centers or even be used on edge nodes with the appropriate implementation.
@@ -73,12 +110,6 @@ This should give one a perspective as well on why one would utilize a distribute
 \subsubsection{Orchestrator / Funnel}
 \todo{Normalization}
 \todo{CVSS}
-\subsection{Database - Grakn.ai}
-\todo{Deduplication}
-\subsubsection{Entity relationship model}
-\subsubsection{Open Source Contributions}
-\todo{e.g. own tooling for creating gexf compatible graphs - Limitations of provided tools (electron)}
-\todo{e.g. own tooling for seeding the db model}
 \subsection{Frontend}
 \subsubsection{Content-based Recommendation}
 \section{Expandability}

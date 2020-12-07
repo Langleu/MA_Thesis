@@ -8,11 +8,93 @@ The graph database was occupying one of the 5 worker nodes, using a special tain
 
 The remaining implementations, e.g. Jenkins, the crawler and the proxy were all scheduled across the remaining 4 nodes.
 
-\todo{write more about what was done, e.g. crawled for two weeks, analyzed for 2 weeks. (cralwed whole range from 0 to 384kb)}
+The byte range of 0 bytes to 384.000 bytes were crawled within two weeks and no additional crawling was done afterwards, meaning the results are purely from one run, which covered all possible bytes that GitHub allows. The analysis took another two weeks and was done after the two weeks of crawling the results to not overload the graph database. The reasoning for this will be explained further down below.
 
 Considering the crawler implementation one can compare the total amount of available "docker-compose" files that the GitHub API provides to the total amount the crawlers have crawled. As already described in the contribution about the crawler \todo{add reference to chapter}, the GitHub API has some limitations that affect the implementation as well. While providing a horizontally scaleable solution, which is only limited by the amount of GitHub tokens supplied, the GitHub API still has some nowhere described complications. This thesis and included test execution were all done under the terms of the GitHub Terms of Services, which states that the crawling of public data is only allowed for scientific works and require the results to be public \todo{quote TOS}. The TOS also states that the usage of the GitHub API is only allowed with a fair usage in mind, meaning one is not allowed to differ too much of the average usage of certain GitHub API routes. Not complying with those rule will likely result in a termination of ones account. During the data collection period, a total of three GitHub accounts were created with the sole purpose of crawling public data, which is only available with a valid GitHub account. Due to the excessive usage of the code search GitHub API route one out of three accounts received a so-called shadow ban. A shadow ban is a system to hide the fact that the user received a temporary termination. A shadow banned user can still use every GitHub API, but the results returned by the API are always empty even though they still conform the expected schema. GitHub as a provider of this free service does not provide any additional documentation about this system. It is not known at which point the account received the shadow ban, but it is to assume that this limitation was applied after the crawling period of two weeks, since the crawler still reported valid results back compared to two weeks later.
 
-Besides this limitation the only other limiting factor was the 16 Gigabyte of memory for a graph database, which turned out to be not an issue by the memory itself, but the graph database had a some blocking operations in the write process, which was heavily relied on. In a recent version this issue was fixed. This issue might have had an impact on the total amount of crawled files, since the database started to block any further insertions. \todo{maybe write about the usage of altering tools}
+Besides this limitation the only other limiting factor was the 16 Gigabyte of memory for a graph database, which turned out to be not an issue by the memory itself, but the graph database had some blocking operations in the write process, which was heavily relied on. In a recent version this issue was fixed. This issue might have had an impact on the total amount of crawled files, since the database started to block any further insertions. To detect those issues a service called Sentry\footnote{https://sentry.io} was used, which sent alerts for not handled issues like the blocking of the database. This might have had an implication on the total amount of crawled files. The community edition of Grakn does not provide any Kubernetes manifests, thereby, manifests and settings have to be created by oneself, which likely results in a not entirely production ready setup, since the production ready setup with multi sharding is only reserved for the commercial usage.
+
+In the following the actual amount of crawled entries will be compared to the possible and total amount of crawled items that the GitHub API returns. Both will be compared to each other by using a column chart.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{graphics/stats_total.png}
+    \caption{Chart representing the total amount of possible results using the GitHub API for the term "docker-compose"}
+    \label{fig:stats_total}
+\end{figure}
+
+The chart \ref{fig:stats_total} represents the total amount of possible results for the term "docker-compose" using only the GitHub API. The Y-Axis represents the total amount of found occurrences and the X-Axis represents bytes. For this graphical representation the range from 0 to 175.000 was used, since between 175 Kilobyte and 384 Kilobyte are only an additional 200 results. There is a total of 1,1 million results in the chart, most of them clustered around the file size of 100 to 200 bytes, which can be explained due to "docker-compose" files being rather simple and short compared to other deployment scripts. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{graphics/stats_range.png}
+    \caption{Cutout from \ref{fig:stats_total} for the range from 0 to 3000 bytes }
+    \label{fig:stats_range}
+\end{figure}
+
+The cutout from the range 0 to 3000 bytes as seen in figure \ref{fig:stats_range} shows that the most files are in a range from 100 to 400 bytes and then slowly traverses towards 0, with as seen in figure \ref{fig:stats_total} occasional occurrences in a higher byte range. Both charts \ref{fig:stats_total} and \ref{fig:stats_range} represent the best case if GitHub would return more than a 1000 results for a single query and are both incomplete as well, since GitHub will only return the amount of found results till it receives a timeout. Meaning that running the same query twice would likely result in different results, as the API receives a timeout and returns all found results so far. This behaviour occurs as well when querying single pages, since GitHub only allows a maximal result of 100 entries. This could mean that for running one query on page 10 one could receive a 100 results and for another one close to 0, since the API received a timeout before. In case of this thesis this issue was dismissed, as the author has no influence on the actual implementation of GitHub and it could be mitigated by running the crawling process multiple times for the same bytes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{graphics/stats_range_max_possible.png}
+    \caption{Cutout from \ref{fig:stats_total} for the range from 0 to 3000 bytes, but a maximum of 1000 results }
+    \label{fig:stats_max_possible}
+\end{figure}
+
+The chart in figure \ref{fig:stats_max_possible} shall represent the maximum amount of possible results, that can be crawled, since the GitHub API only returns a maximum of 1000 results for a single query. As explained prior for the chart \ref{fig:stats_range}, this does not mean that one will receive a 1000 results, since the GitHub API is nondeterministic.
+
+Further on, the charts for the actual crawled data will be shown, which resulted in 140.000 valid deployments. Valid, since only parseable deployment files were inserted into the database, see \todo{add reference to the explanation in contribution} in the chapter about the implementation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{graphics/deployment_stats_total.png}
+    \caption{Chart representing the total amount of possible results using the crawler implementation for the term "docker-compose"}
+    \label{fig:deployment_total}
+\end{figure}
+
+Comparing the figure \ref{fig:stats_total} and the figure \ref{fig:deployment_total}, one may notice a similar representation, which validates the overall implementation, since clusters for similar bytes were successfully crawled with occasional results in the higher byte area.
+The chart \ref{fig:deployment_total} also shows that the maximum crawleable number of a 1000 results was never reached, which could be explained by either the nondeterministic behavior of the GitHub API or the blocking process of the database. On the other hand this could simply be explained by non parseable deployment scripts as well, since a lot of people have especially in the lower byte range scripts that are the bare minimum or contain syntactical issues, which cause the parsing to fail and at the same time render the file useless for the "docker-compose" executable as well, since it can not parse the file either.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{graphics/deployment_stats_range.png}
+    \caption{Cutout from \ref{fig:deployment_total} for the range from 0 to 3000 bytes}
+    \label{fig:deployment_range}
+\end{figure}
+
+The chart \ref{fig:deployment_range} still resembles the chart \ref{fig:stats_range}, but it is visible that that the previously described shadow ban has occurred earlier than expected, since the chart \ref{fig:deployment_range} shows multiple spots where barely any results were returned, e.g. 161-201, 441-481 or 521-641, which mirror the system of a shadow ban. The implementation featured crawler windows, which consisted of a byte range that were individually assigned to each crawler, which in this case could have been assigned to the shadow banned account. During the execution period it was not visible that the account was affected, since it acted as expected and returned results according to the schema.
+
+Overall the GitHub API returned a total amount of 940.000 possible crawleable entries, which can still differ in numbers when actually crawled for due to the way the GitHub API works. A total of 140.000 valid deployment scripts were inserted into the database, which represents 15\% of the total crawleable amount. Limiting factors were in this case the nondeterministic behavior of the GitHub API, the shadow ban system of GitHub and the blocking operations of the graph database. Except the nondeterministic behavior of the GitHub API all other issues can be mitigated for future work, by providing more valid GitHub tokens, which can be switched in case of shadow banned accounts and a more non-blocking graph database. Grakn already provided a patch to resolve the blocking issue, but in the non community edition the graph database can be scaled across multiple Kubernetes nodes as well, since the community edition does not provide any Kubernetes manifests and relied on the implementation of the author.
+
+In total the graph database contains 4,2 million entries, which can be divided into roughly a million nodes, a million edges and two million attributes. Which can be further split down as follows:
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |c|c| }
+    \hline
+    Type & Amount \\
+    \hline
+         count & 4.279.664 \\
+         attributes & 2.546.547 \\
+         \hline
+         nodes & 836.337 \\
+         \hline
+         user & 127.084 \\
+         repository & 160.506\\
+         deployment & 139.469\\
+         service & 409.277\\
+         \hline
+         edges & 896.780 \\
+         \hline
+         own & 159.834 \\
+         contain & 194.797 \\
+         include & 404.736 \\
+         depend & 137.412 \\
+    \hline
+    \end{tabular}
+    \caption{Graph Database total counts}
+    \label{graph_database_total_counts}
+\end{table}
 
 %Second most important chapter. Verifies the theses defined in the previous chapter. Tries to evaluate and analyze the contribution in qualitative or quantitative terms. Ends with a discussion. Approximately 20 to 30 pages. Can be split into multiple chapters.
 

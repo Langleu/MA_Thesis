@@ -96,6 +96,117 @@ In total the graph database contains 4,2 million entries, which can be divided i
     \label{graph_database_total_counts}
 \end{table}
 
+The approximately 400.000 services can be analysed further by having a look at the most used images and their versions. This will be divided into multiple tables with different categories, which are databases, programming languages and miscellaneous.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |c|c| }
+    \hline
+    Image & Amount \\
+    \hline
+         postgres & 20074 \\
+         mysql & 16103 \\
+         redis & 13817 \\
+         mongo & 11843 \\
+         mariadb & 3241 \\
+    \hline
+    \end{tabular}
+    \caption{Top 5 image counts for databases}
+    \label{table_image_databases}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |c|c| }
+    \hline
+    Image & Amount \\
+    \hline
+         node & 2346 \\
+         php & 1121 \\
+         golang & 375 \\
+         python & 353 \\
+         java / openjdk & 325 \\
+    \hline
+    \end{tabular}
+    \caption{Top 5 image counts for programming languages}
+    \label{table_image_languages}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |c|c| }
+    \hline
+    Image & Amount \\
+    \hline
+         nginx & 8459 \\
+         rabbitmq & 3241 \\
+         hyperledger/fabric-peer & 2834 \\
+         phpmyadmin/phpmyadmin & 2523 \\
+         hyperledger/fabric-ca & 2105 \\
+    \hline
+    \end{tabular}
+    \caption{Top 5 image counts for miscellaneous}
+    \label{table_image_misc}
+\end{table}
+
+
+
+Coming to the distributed analysis where Jenkins was used as a base system for running a predefined test for each "docker-compose" file. The tests were conducted for two weeks with a total amount of 60.000 executed tests. By the end a total of 18.000 scripts were successfully evaluated. The failure reasons of the other 42.000 tests can be viewed from different technical perspectives.
+
+For once, public data was crawled and inserted into the database and GitHub repositories were either deleted or made private within this short time period, which accounts to a total of a 1000 repositories. The whole "docker-compose" file could have been saved in the database, but it only has limited further usage, since docker-compose files usually contain a build directive in the file, meaning without the repository the "docker-compose" file can't be executed and this already accounts for a sixth of the score and the vulnerability scan can not be executed in detail as well, which would be worth a third of the whole score. In the beginning, the proxy was missing a denylist causing the 1000 unavailable repositories to be rerun over and over again, but this was fixed during the analysis period.
+
+Kubernetes was used as container orchestration and, as previously described, was set up on dedicated machines, which means the whole maintenance was included as well. A production ready setup was used for the 5 nodes cluster, but after running a total of approximately 20.000 pods no pods and, therefore, no further tests could be scheduled. It turned out that the etcd storage contained too many objects and started blocking the master nodes, which did not respond to any new requests. This caused the whole cluster to stall, since all requests received a timeout. This happened around the 40.000 mark again, resulting in a lot of aborted tests, as a lot of them had stalled.
+
+Overall most of the Jenkins related issues can be mitigated by using managed Kubernetes clusters by e.g. Azure, AWS or GCP with dedicated node pools, which are only used by the CI system.
+
+The score system, explained in the contribution \todo{add reference}, consists of in total 4 different criteria, with each a different significance for the final score. The first third is split into two sixth, since the criteria evaluated in there are of less importance in comparison to the remaining criteria. One sixth considers where a file can be executed or not. Another sixth covers the file length of the file, since the longer the file the more valuable it seems. One third covers the CVSS score, which considers the vulnerability of an image or in this case the vulnerability score of all included images. The last third covers "docker-compose" related best practices.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{graphics/deployment_score.png}
+    \caption{Score distribution}
+    \label{fig:deployment_score}
+\end{figure}
+
+The figure \ref{fig:deployment_score} shows the score distribution between 0 and 100, where 100 is the best possible score. The X-Axis represents the scores and the Y-Axis are the total amount of occurred scores. The chart shows that there are clusters around the score 24, 54 and 74, which could be explained through the split of the score in four criteria. Some of those criteria are more variable compared to others, e.g. executable is either a true or false and, thereby, contributes either fully or not at all to the score. Taking this fact into account, it's interesting to see that there is no score below twelve, which means that every evaluated deployment script fulfills at least parts of one criteria to the fullest. For the ones around twelve it is to assume that they are executable, since it counts as a sixth of the total score, but at the same time are short and vulnerable. Taking a look at the opposite side of the chart, there is nothing that fulfills a score of a 100, nor is a score close to it. This can be based on the issue of taking the file length too much into account as valuable source, as explained in the contribution part \todo{add reference to part} the file length of 300 as a reference for a "docker-compose" based deployment script might be too much and this unfolds in the chart, since there is a cluster around 74, which will fulfill almost all criteria to the fullest except the file length. For future work this could be changed to the file size, since the file size brings more value compared to the file length. Taking a look at the 180.000 crawled deployment scripts the median of the file length amounts to 22 and even taking the median of the upper part still amounts to 45, meaning that more than 75\% are smaller or equal to the file length of 45. On the other hand taking the file size into account it shows a median of 438 for the 180.000 scripts. This median would have been much more suitable for the score and could be used as a replacement for the file length. Nevertheless, since the file length only accounted for a sixth of the total score and in general has less significance for the value of its content, the score itself and the distribution shown in chart \ref{fig:deployment_score} are still valid and express the importance of the contents of a single deployment script.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{graphics/deployment_score_normalized.png}
+    \caption{Score distribution normalized}
+    \label{fig:deployment_score_normalized}
+\end{figure}
+
+Taking a simplified look at the score distribution in the chart \ref{fig:deployment_score_normalized}, one can see a better picture of the score clusters. For the distribution between the score of 50 and 60 the amount of executable scripts amounts to 99\%, while the total amount of executable files amounts to 56\%. This cluster can be summarized as average but executable, as the deployment script is either fully vulnerable or fully following the best practices or, which is more likely, an average of both criteria.
+
+The CVSS score is the most variable one and looking at the charts of \ref{fig:deployment_score} and \ref{fig:deployment_score_normalized} explain the values inbetween those previously mentioned clusters around the score of 24, 54 and 74.
+
+The score gives an indication whether one script is more valuable compared to another. Still, the suggested scripts should be consumed with caution, since one might not know the contents of one image or the possible dangers of defining specific environment variables without enough care.
+For future works the criteria of the file length should be replaced with the file size, as it brings more value compared to the length. The suggestion of using a Z-Score instead of a Min-Max normalization can be dismissed, since the goal of Z-Score normalization is to form the data into a normal distribution, which is not applicable for this type of data. Thereby, the Min-Max normalization is preferred, since the data requires to have the same scale, since one wants to compare across all available data with the same scale.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |c|c|c|c| }
+    \hline
+    score & image & tag & base image \\
+    \hline
+         78,69 & linuxserver/letsencrypt & latest & alpine \\
+         78,03 & myregistry/simplest-lab & simplestlb, simplestdb, simplestapp & alpine \\
+         77,75 & try-webpack & dev & alpine\\
+         77,70 & aporeto/apobar & crud & ubuntu \\
+         77,53 & python & 3-alpine & alpine\\
+         77,53 & traefik & latest & alpine\\
+    \hline
+    \end{tabular}
+    \caption{Images with highest scores}
+    \label{images_with_highest_score}
+\end{table}
+
+The table \ref{images_with_highest_score} represents the contents of the 5 deployment scripts with the highest score. While the table looks small, some of those images were used multiple times in the same file, making the "docker-compose" files rather complex.
+Something that should stick out of the table \ref{images_with_highest_score} is the fact, that most images use alpine as a base image. Alpine compared to other distributions, used for docker, is more secure and simpler, due to the removal of a lot of standard libraries and executables. Due to the removal of such things the resulting image is much smaller and at the same time more secure, since the attack surface is shrinked quite a bit.
+The one image that is using Ubuntu in this table is an assumption, since the Dockerfile is not publicly available, nor does the contents of the Docker image give any insights. The image does not contain any executable that one would assume, e.g. ls, echo, cd, shell, bash, and many more. The only thing possible is to gain access to the \$PATH by causing an error, but even this doesn't bring much more information than already known, except for the fact that "snap" is in the path. Snap is a package manager shipped out of the box with newer Ubuntu versions, thereby the assumption of Ubuntu. Nevertheless, this image is much more secure than a default Ubuntu image and shows how to properly secure ones container even against reverse engineering.
+Besides alpine as base image, busybox is used quite often as well, since it combines a lot of utilities into a single executable and is perfect for running simple scripts or in the context of Kubernetes as initialization container. Due to its limitied capabilities it's quite secure as well, since there is barely any attack surface.
+
 %Second most important chapter. Verifies the theses defined in the previous chapter. Tries to evaluate and analyze the contribution in qualitative or quantitative terms. Ends with a discussion. Approximately 20 to 30 pages. Can be split into multiple chapters.
 
 % Hier solltest du die limitations deiner Contirbution versuchen zu analysieren. Dies können quantitative sachen sein, wie die limitationen des crawlers wie oft gecrawlet werden kann über github api und wie oft dann andere ergebnisse rauskommen. andere sachen wären zB ob der von dir erstellte score "qualitativ gut" IaC bewerten kann. Für diese unterschiedlichen Punkte sollten folgende Unterpunkte folgen:

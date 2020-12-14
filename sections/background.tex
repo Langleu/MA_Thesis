@@ -1,23 +1,36 @@
 \chapter{Background}
-Necessary background for topic, in order to understand the problem, motivation and contribution. Approximately 10 pages.
+The background describes necessary topics to understand the problem, motivation, and contribution.
 
 \section{Infrastructure as Code}
-\subsection{Containerization}
-\subsection{Workload Isolation}
-\subsection{Kubernetes} \todo{Pods, initalPods (max halbe Seite)}
-\subsection{Tools}
+Infrastructure as Code describes the concept of defining infrastructure related elements, like servers, networks, databases, or applications in source code. This brings along various advantages like versioning, since it is manifested in a file and can be kept in a version control \todo{cite https://www.hashicorp.com/resources/what-is-infrastructure-as-code}. Automation tools can be build around the concept of Infrastructure as Code and allows integration with Continuous Delivery and Container Orchestrations, granting the advantage of immutable infrastructure since elements are rebuild instead of updating running applications.
+\section{Containerization}
+Is the concept of isolating environments for single applications within an OS. This allows to package the software with all of its dependencies and run it consistently on any underlying infrastructure\todo{cite https://www.ibm.com/cloud/learn/containerization}, as long as it supports the same architecture. It is often used with the concept of a microservice architecture since it allows running all services isolated from each other and enables scalability.
 
+%\subsection{Workload Isolation}
+\section{Kubernetes}
+Kubernetes, according to their documentation\todo{cite https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/} is an open-source platform for managing containerized workloads and services. It utilizes declarative manifests for configuring workloads and, thereby, embeds into the idea of Infrastructure as Code. Furthermore it can be said that Kubernetes is an orchestration platform and was initially published by Google as an open-source project in 2014. Compared to traditional deployments, Kubernetes offers additional isolation due to the usage of container runtimes like Docker or containered and allows scaling applications across multiple servers without much configuration.
+
+Compared to other container orchestration systems, Kubernetes offers the concept of a Pod, which is the smallest deployable unit in Kubernetes\todo{cite https://kubernetes.io/docs/concepts/workloads/pods/}. A pod unites one or more containers into one unit, which all share the same underlying storage and network resources. This has the advantage, that one could combine a multitude of tools into one pod, making it easier to process certain data without the need of an additional storage. Example use cases are Continuous Integration, where one could bundle all required tools into one pod or simply a frontend application, which requires the build of static resources.
+
+Another concept that pods are used for are the so-called init containers. The concept of an initialization container is to run before the actual container starts and allows to interact with the underlying storage as well\todo{cite https://kubernetes.io/docs/concepts/workloads/pods/init-containers/}. In the example of the frontend application the init container could build those static resources before the actual application even starts. An init container can not be used to seed a database with data since the database would only start if the init container has finished.
+
+\section{Relational Database}
+A relational database is a database with pre-defined relationships between them using a relational model\todo{cite https://aws.amazon.com/relational-database/}. It saves data in tables, containing rows and columns, with each row owning a unique identifier. Data distributed among different tables can be connected using keys, and thereby showing a relation.
+\section{Graph database}
+A graph database is a relational database as well, but treats relationships between data as equally important to the data itself\todo{cite https://neo4j.com/developer/graph-database/}. The data storage depends on the implementation of the graph database, but is usually not done in tables.
 \section{Knowledge Graph}
-\subsection{Relational Database}
-\subsection{Graph database}
+A Knowledge Graph is based on a graph database with additional decision support usually utilizing an AI\footnote{Artificial intelligence} or Machine Learning.\todo{cite https://neo4j.com/blog/ai-graph-technology-knowledge-graphs/}
 
-\section{Automation}
-\subsection{Jenkins}
-\subsection{Workflow Engines}
+\section{Jenkins}
+Jenkins is an open source automation server \todo{cite https://www.jenkins.io/}, which due to its plugin supports can be used as Continuous Integration or Continuous Delivery system as well. It is extensible and allows to be molded according to ones requirements. Using the right plugins it can use Kubernetes to orchestrate its workloads across the clusters, making it distributed.
+\section{Workflow Engines}
+A workflow engine is an application, which orchestrates tasks according to a workflow or business process and manages those tasks\todo{cite https://itnext.io/the-concept-of-workflow-engines-c14e8088283}. It can be used for fully automated processes like CI/CD or any other automation. Integration with such things as Kubernetes depeneds on the implementation of the chosen workflow engine.
 
 \section{Recommender System}
-\subsection{Collaborative Filtering}
-\subsection{Content-based}
-\subsection{Hybrid}
+A recommender system is a system, which suggests items, which could be of interest for a user. For this the system collects preferences of the user and uses those to find a suitable item.\todo{cite https://www.is.inf.uni-due.de/courses/sem_ss08/papers/p06_recommendersystems.pdf}
 
-\todo{normalization (minx max vs z score)}
+Recommender systems are categorized in one of fours types, which are Collaborative Filtering, Content-based, Knowledge-based and, a Hybrid approach.
+A Collaborative Filtering system recommends items that have been preferred by other users with related choices.
+Content-based recommends items that are similar to items that the user has preferred in the past.
+Knowledge-based recommender systems use user defined constraints or cases to recommend items based on those information. \todo{script of DC}
+A hybrid system uses both Collaborative Filtering and Content-based recommendations.

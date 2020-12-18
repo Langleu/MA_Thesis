@@ -157,7 +157,10 @@ The table \ref{table_image_databases} describing the top 5 used databases, shows
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/databases_top_popularity_ranking.png}
+    \def\stackalignment{r}
+    \stackunder{\includegraphics[scale=0.5]{graphics/databases_top_popularity_ranking.png}\\
+    {\tiny
+    Source: \url{https://pypl.github.io/DB.html}}}
     \caption{Most searched databases on Google Trends, which offer a docker image}
     \label{fig:databases_top_ranking}
 \end{figure}
@@ -167,7 +170,10 @@ Comparing the table \ref{table_image_databases} and the chart \ref{fig:databases
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/languages_top_popularity_ranking.png}
+    \def\stackalignment{r}
+    \stackunder{\includegraphics[scale=0.5]{graphics/languages_top_popularity_ranking.png}\\
+    {\tiny
+    Source: \url{https://pypl.github.io/PYPL.html}}}
     \caption{Most searched programming languages on Google Trends, which offer a docker image}
     \label{fig:databases_top_ranking}
 \end{figure}
@@ -305,7 +311,7 @@ For the graph visualization, the program Gephi\footnote{https://gephi.org/} was 
 
 \begin{figure}[H]\centering
 \begin{tikzpicture}[spy using outlines={circle,red,magnification=3,size=5cm, connect spies}]
-    \node { \includegraphics[scale=0.06]{graphics/graph_modularity_v3.png} };
+    \node { \includegraphics[scale=0.05]{graphics/graph_modularity_v3.png} };
     \spy on (-0.15,0.95) in node [right] at (4,1.5);
 \end{tikzpicture}
     \caption{Graph showing communities with more than a hundred members}
@@ -326,7 +332,7 @@ The figure \ref{fig:community_distribution} shows the distribution of all commun
 
 \begin{figure}[H]\centering
 \begin{tikzpicture}[spy using outlines={circle,red,magnification=3,size=7cm, connect spies}]
-    \node { \includegraphics[scale=0.06]{graphics/graph_type.png} };
+    \node { \includegraphics[scale=0.05]{graphics/graph_type.png} };
     \spy on (1,-1) in node [right] at (3,1.5);
 \end{tikzpicture}
     \caption{Graph according to their type and degree}
@@ -341,8 +347,8 @@ GitHub sees users and organisations as the same entity and, thereby, the user\fo
 
 \begin{figure}[H]\centering
 \begin{tikzpicture}[spy using outlines={circle,red,magnification=3,size=5cm, connect spies}]
-    \node [opacity=0.7] { \includegraphics[scale=0.06]{graphics/graph_type.png} };
-    \node [opacity=0.6] { \includegraphics[scale=0.06]{graphics/graph_modularity_v3.png} };
+    \node [opacity=0.7] { \includegraphics[scale=0.05]{graphics/graph_type.png} };
+    \node [opacity=0.6] { \includegraphics[scale=0.05]{graphics/graph_modularity_v3.png} };
     \spy on (-0.15,0.95) in node [right] at (4,1.5);
 \end{tikzpicture}
     \caption{Overlay of the figures \ref{fig:graph_communities} and \ref{fig:graph_types}, to indicate node degree in direct relation to communities}

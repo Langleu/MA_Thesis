@@ -1,6 +1,25 @@
 \chapter{Conclusion}
 \label{sec:conclusion}
+This thesis, crawled approximately 127,000 users, 160,000 repositories, 139,000 "docker-compose" scripts, which covered 409,000 services, and resulting in a total amount of 900,000 edges and 840,000 nodes.
+Out of these 139,000 "docker-compose" scripts a total amount of 18,000 scripts were successfully analysed within 2 weeks using an automation system and proper workload isolation.
 
-One page. What have we learned in/through this thesis?
+An evaluation was carried out from two different perspectives, which are the general data analysis and the visual analysis by utilizing a graph.
+The general analysis revealed a heavy focus on web development related topics since the most used programming languages are JavaScript and PHP. The top 5 used databases revealed a focus on relational databases compared to non relational databases with a share of 60\% compared to 40\% if only taking the top 5 used databases into account. Besides that the general analysis showed a focus on message queues and blockchain technologies as well.
+35\% of all versions described the latest image in the "docker-compose" file, which is discouraged by the factor of reproducibility since it can't be guaranteed that the image is still the same in a week and thereby hindering successful execution.
+All of the deployment scripts with a higher score showed the usage of alpine based images or security hardened images, which should be the best practice in terms of security for Docker.
 
-Expected thesis length: 90 pages (+-10\%)
+The self-hosting of a production ready Kubernetes cluster showed its limitations when using it in direct relation to Continuous Integration since the etcd storage was filled so quickly that it started blocking the Kubernetes API.
+
+Focusing on the visual analysis using the graph derived from the knowledge graph, revealed that some bigger communities around deployment scripts exist but the majority of 99.9\% are smaller communities with less than a 100 members, and thereby the overall system is rather disconnected and not showing any signs of a small world problem. Additionally the visual analysis revealed business models around GitHub and "docker-compose", by utilizing GitHub as a storage for a "docker-compose" as a service system or the App builder kit, which created individual repositories, containing "docker-compose" files, for each created application. Furthermore implicit metrics can be derived from the graph, which can be useful to determine popular tutorials or popular projects without relying on an explicit rating defined by a subset of users.
+
+An implementation of a future proof crawler, analysis and recommender system was described by the utilization of the strategy pattern.
+The scoring system was explained, which is the main driver of the knowledge-based recommender system. Further on, the score is derived by using an automated and isolated pipeline to determine metrics, such as best practices, vulnerability scores, whether it is executable, and file length.
+
+Related work in this field always covered only one aspect of a deployment script and defined a binary score of whether this aspect applied or not. This thesis focused on the creation of a numerical value, which can be utilized further by the recommender system.
+Overall the score gives an indication of how good a deployment script is in terms of vulnerabilities and best practices.
+
+Future work could extend on this thesis and implement additional strategies for other deployment scripts. The possibility of a hybrid recommender system exists by creating a community around it and introducing a mix of collaborative filtering and knowledge-based recommendation. Additional meta information could be crawled from the GitHub API to create interlinkages between users by using their followers and followings lists to create possibly bigger communities.
+
+%One page. What have we learned in/through this thesis?
+
+%Expected thesis length: 90 pages (+-10\%)

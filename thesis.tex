@@ -8,9 +8,19 @@
 \newcommand{\titleLineThree}{}
 \newcommand{\documentdate}{\today}
 \newcommand{\studentname}{Lars Lange}
-\newcommand{\abstracttextde}{Kurze Zusammenfassung der Arbeit in 250 W\"ortern.}
-\newcommand{\abstracttext}{Short version of the thesis in 250 words.}
-\newcommand{\acktext}{This chapter is optional. First of all, I would like to...}
+\newcommand{\abstracttextde}{Infrastructure as Code hat in den letzten Jahren durch die DevOps-Bewegung viel an Bedeutung gewonnen, aber bisher hat noch niemand ein Empfehlungssystem für Deployment-Skripte entwickelt, das basierend auf benutzerdefinierten Eingaben ähnliche Skripte vorschlägt, die durch einen vorberechneten Wert ermittelt werden. Dieser Wert umfasst „Best Practices“, Schwachstellen, Dateilänge und die Frage, ob das Skript ausführbar ist.
+Die Implementierung eines verteilten Crawlers, einer verteilten Analyse und eines Empfehlungssystems werden im Detail beschrieben, die durch die Verwendung des Strategiemusters zukunftssicher sind.
+Der Hauptfokus lag auf Deployment-Skripten rund um Docker-Compose und es wurden ca. 127.000 Benutzer, 160.000 Repositorien und 139.000 Docker-Compose-Skripte vom System gecrawlt und verarbeitet, was insgesamt 409.000 Dienste und Images ergab.
+Von diesen 139.000 Skripten wurden insgesamt 18.000 erfolgreich analysiert, indem die verteilte Analyse genutzt wurde, die eine automatisierte Pipeline in einer isolierten Umgebung durchführte, um Konsistenz zu gewährleisten.
+Die Auswertung der Daten aus zwei verschiedenen Blickwinkeln, datenbezogen und grafisch, offenbarte einen beliebten Verwendungszweck von Docker-Compose-Skripten, gab aber auch implizite Einblicke in die Community rund um das Skript, speziell auf GitHub.
+}
+\newcommand{\abstracttext}{Infrastructure as Code has gained a lot of traction in recent years due to the DevOps movement, but so far no one has covered a recommendation system for deployment scripts yet, which suggests those based on user-defined input to recommend similar scripts established through a pre-calculated score. This score covers best practices, vulnerabilities, file length, and whether the script was executable.
+Furthermore, implementation of a distributed crawler, distributed analysis, and recommender system are described in detail, which are future proof by utilizing the strategy pattern.
+The main focus relied on deployment scripts around Docker-Compose and approximately 127,000 users, 160,000 repositories, and 139,000 Docker-Compose scripts were crawled and processed by the system, which resulted in a total of 409,000 services and images.
+Out of these 139,000 scripts, a total of 18,000 were successfully analysed by utilizing the distributed analysis, which ran an automated pipeline in an isolated environment to guarantee consistency.
+Evaluating the data from two different perspectives, data related and graph related, revealed a popular usage point of Docker-Compose scripts, but also gave implicit insights on the community around it, specifically on GitHub.
+}
+%\newcommand{\acktext}{This chapter is optional. First of all, I would like to...}
 
 \begin{document} 
 

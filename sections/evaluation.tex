@@ -9,7 +9,7 @@ The graph database was occupying one of the 5 worker nodes, using a special tain
 
 The remaining implementations, e.g. Jenkins, the crawler and the proxy were all scheduled across the remaining 4 nodes.
 
-The byte range of 0 bytes to 384,000 bytes was crawled within two weeks and no additional crawling was done afterwards, meaning the results are purely from one run, which covered all possible bytes that GitHub allows. The analysis took another two weeks and was done after the two weeks of crawling, to not overload the graph database. The reasoning for this will be explained in the General Analysis\ref{sec:general_analysis}.
+The byte range of 0 bytes to 384,000 bytes was crawled within two weeks and no additional crawling was done afterwards, meaning the results are purely from one run, which covered all possible bytes that GitHub allows. The analysis took another two weeks and was done after the two weeks of crawling, to not overload the graph database. The reasoning for this will be explained in the General Analysis \ref{sec:general_analysis}.
 
 \section{General Analysis}
 \label{sec:general_analysis}
@@ -22,7 +22,7 @@ In the following, the actual amount of crawled entries will be compared to the p
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/stats_total.png}
+    \includegraphics[scale=0.5]{graphics/stats_total_bw.png}
     \caption{Chart representing the total amount of possible results using the GitHub API for the term "docker-compose"}
     \label{fig:stats_total}
 \end{figure}
@@ -31,8 +31,8 @@ The chart \ref{fig:stats_total} represents the total amount of possible results 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/stats_range.png}
-    \caption{Cutout from \ref{fig:stats_total} for the range from 0 to 3000 bytes }
+    \includegraphics[scale=0.5]{graphics/stats_range_bw.png}
+    \caption{Cutout from \ref{fig:stats_total} for the range from 0 to 3,000 bytes }
     \label{fig:stats_range}
 \end{figure}
 
@@ -40,18 +40,18 @@ The cutout from the range 0 to 3,000 bytes as seen in figure \ref{fig:stats_rang
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/stats_range_max_possible.png}
-    \caption{Cutout from \ref{fig:stats_total} for the range from 0 to 3,000 bytes, but a maximum of 1,000 results }
+    \includegraphics[scale=0.5]{graphics/stats_range_max_possible_bw.png}
+    \caption{Cutout from \ref{fig:stats_total} for the range from 0 to 3,000 bytes, but a maximum of 1,000 results due to GitHub API limitations }
     \label{fig:stats_max_possible}
 \end{figure}
 
 The chart in figure \ref{fig:stats_max_possible} shall represent the maximum amount of possible results, that can be crawled since the GitHub API only returns a maximum of 1000 results for a single query. As explained prior for the chart \ref{fig:stats_range}, this does not mean that one will receive a 1000 results, since the GitHub API is nondeterministic.
 
-Further on, the charts for the actual crawled data will be shown, which resulted in 140,000 valid deployments. Valid, since only parseable deployment files were inserted into the database, see \ref{sec:processing} in the chapter about the implementation.
+Further on, the charts for the actual crawled data will be shown, which resulted in 140,000 valid deployments. Valid, since only parseable deployment files were inserted into the database, see Processing \ref{sec:processing} in the chapter about the implementation.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/deployment_stats_total.png}
+    \includegraphics[scale=0.5]{graphics/deployment_stats_total_bw.png}
     \caption{Chart representing the total amount of possible results using the crawler implementation for the term "docker-compose"}
     \label{fig:deployment_total}
 \end{figure}
@@ -61,7 +61,7 @@ The chart \ref{fig:deployment_total} also shows that the maximum crawlable numbe
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/deployment_stats_range.png}
+    \includegraphics[scale=0.5]{graphics/deployment_stats_range_bw.png}
     \caption{Cutout from \ref{fig:deployment_total} for the range from 0 to 3,000 bytes}
     \label{fig:deployment_range}
 \end{figure}
@@ -70,7 +70,7 @@ The chart \ref{fig:deployment_range} still resembles the chart \ref{fig:stats_ra
 
 Overall the GitHub API returned a total amount of 940,000 possible crawlable entries, which can still differ in numbers when actually crawled for due to the way the GitHub API works. A total of 140,000 valid deployment scripts were inserted into the database, which represents 15\% of the total crawlable amount. Limiting factors were, in this case, the nondeterministic behaviour of the GitHub API, the shadowban system of GitHub and the blocking operations of the graph database. Except for the nondeterministic behaviour of the GitHub API, all other issues can be mitigated for future work, by providing more valid GitHub tokens, which can be switched in case of shadowbanned accounts and a more non-blocking graph database. Grakn already provided a patch to resolve the blocking issue, but in the non-community edition, the graph database can be scaled across multiple Kubernetes nodes as well, since the community edition does not provide any Kubernetes manifests and relied on the implementation of the author.
 
-In total the graph database contains 4,2 million entries, which can be divided into roughly a million nodes, a million edges and two million attributes. Which can be further split down as follows:
+In total the graph database contains 4.2 million entries, which can be divided into roughly a million nodes, a million edges and two million attributes. Which can be further split down as follows:
 
 \begin{table}[h!]
     \centering
@@ -158,7 +158,7 @@ The table \ref{table_image_databases} describing the top 5 used databases, shows
 \begin{figure}[H]
     \centering
     \def\stackalignment{r}
-    \stackunder{\includegraphics[scale=0.5]{graphics/databases_top_popularity_ranking.png}\\
+    \stackunder{\includegraphics[scale=0.45]{graphics/databases_top_popularity_ranking.png}\\
     {\tiny
     Source: \url{https://pypl.github.io/DB.html}}}
     \caption{Most searched databases on Google Trends, which offer a docker image}
@@ -171,7 +171,7 @@ Comparing the table \ref{table_image_databases} and the chart \ref{fig:databases
 \begin{figure}[H]
     \centering
     \def\stackalignment{r}
-    \stackunder{\includegraphics[scale=0.5]{graphics/languages_top_popularity_ranking.png}\\
+    \stackunder{\includegraphics[scale=0.45]{graphics/languages_top_popularity_ranking.png}\\
     {\tiny
     Source: \url{https://pypl.github.io/PYPL.html}}}
     \caption{Most searched programming languages on Google Trends, which offer a docker image}
@@ -185,14 +185,14 @@ Images with a lot of occurrences, but no unified category were summarized as mis
 For the remaining images, it is interesting to see that things such as message brokers and blockchain technologies are so popular.
 
 From the approximately 400,000 images covered the majority of images used the latest tag with 35\%, which is problematic since the latest tag reduces the reproducibility. This reduces the validity of a "docker-compose" file, as depending on how old the file is the latest tag will most likely have changed already, especially for such things as databases or programming languages, where a major version can already break the implementation. The latest tag was covered in the best practices analysis as it should be avoided in favour of reproducibility.
-Another 3,6\% are using alpine related images, while this is solely based on the image tag. The real value might be higher since the tag depends on the user's declaration, where popular docker image maintainers usually stick to the convention of declaring the base image in the tag.
-For 3,1\% of all images a variable tag was used, which is an interesting approach as well since it allows one to be flexible when it comes to choosing the image. As the Readme was not checked for those scripts, it might not be clear whether it is anyhow documented, which once more can have an impact on reproducibility.
+Another 3.6\% are using alpine related images, while this is solely based on the image tag. The real value might be higher since the tag depends on the user's declaration, where popular docker image maintainers usually stick to the convention of declaring the base image in the tag.
+For 3.1\% of all images a variable tag was used, which is an interesting approach as well since it allows one to be flexible when it comes to choosing the image. As the Readme was not checked for those scripts, it might not be clear whether it is anyhow documented, which once more can have an impact on reproducibility.
 
-Coming to the distributed analysis where Jenkins was used as a base system for running a predefined test for each "docker-compose" file. The tests were conducted for two weeks with a total amount of 60.000 executed tests. By the end, a total of 18.000 scripts were successfully evaluated. The failure reasons of the other 42.000 tests can be viewed from different technical perspectives.
+Coming to the distributed analysis where Jenkins was used as a base system for running a predefined test for each "docker-compose" file. The tests were conducted for two weeks with a total amount of 60,000 executed tests. By the end, a total of 18,000 scripts were successfully evaluated. The failure reasons of the other 42,000 tests can be viewed from different technical perspectives.
 
-For once, public data was crawled and inserted into the database and GitHub repositories were either deleted or made private within this short time period, which accounts to a total of a 1000 repositories. The whole "docker-compose" file could have been saved in the database, but it only has limited further usage, since docker-compose files usually contain a build directive in the file, meaning without the repository the "docker-compose" file can't be executed. This already accounts for a sixth of the score and also has the disadvantage of the vulnerability scan can not being executable, since some of the images would be missing, which is another third of the whole score. In the beginning, the proxy was missing a denylist causing the 1000 unavailable repositories to be rerun over and over again, but this was fixed during the analysis period.
+For once, public data was crawled and inserted into the database and GitHub repositories were either deleted or made private within this short time period, which accounts to a total of a 1,000 repositories. The whole "docker-compose" file could have been saved in the database, but it only has limited further usage, since docker-compose files usually contain a build directive in the file, meaning without the repository the "docker-compose" file can't be executed. This already accounts for a sixth of the score and also has the disadvantage of the vulnerability scan can not being executable, since some of the images would be missing, which is another third of the whole score. In the beginning, the proxy was missing a denylist causing the 1,000 unavailable repositories to be rerun over and over again, but this was fixed during the analysis period.
 
-Kubernetes was used as container orchestration and, as previously described, was set up on dedicated machines, which means the whole maintenance was included as well. A production-ready setup was used for the 5 nodes cluster, but after running a total of approximately 20.000 pods no pods and, therefore, no further tests could be scheduled. It turned out that the etcd storage contained too many objects and started blocking the master nodes, which did not respond to any new requests. This caused the whole cluster to stall since all requests received a timeout. This happened around the 40.000 mark again, resulting in a lot of aborted tests, as a lot of them had stalled.
+Kubernetes was used as container orchestration and, as previously described, was set up on dedicated machines, which means the whole maintenance was included as well. A production-ready setup was used for the 5 nodes cluster, but after running a total of approximately 20,000 pods no pods and, therefore, no further tests could be scheduled. It turned out that the etcd storage contained too many objects and started blocking the master nodes, which did not respond to any new requests. This caused the whole cluster to stall since all requests received a timeout. This happened around the 40.000 mark again, resulting in a lot of aborted tests, as a lot of them had stalled.
 
 Overall most of the Jenkins related issues can be mitigated by using managed Kubernetes clusters by e.g. Azure, AWS or GCP with dedicated node pools, which are only used by the CI system.
 
@@ -200,21 +200,21 @@ The scoring system, explained in the contribution \ref{sec:calculation_of_score}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/deployment_score.png}
+    \includegraphics[scale=0.4]{graphics/deployment_score_bw.png}
     \caption{Score distribution}
     \label{fig:deployment_score}
 \end{figure}
 
-The figure \ref{fig:deployment_score} shows the score distribution between 0 and 100, where 100 is the best possible score. The X-Axis represents the scores and the Y-Axis are the total amount of occurred scores. The chart shows that there are clusters around score 24, 54 and 74, which could be explained through the split of the score in four criteria. Some of those criteria are more variable compared to others, e.g. executable is either a true or false and, thereby, contributes either fully or not at all to the score. Taking this fact into account, it's interesting to see that there is no score below twelve, which means that every evaluated deployment script fulfils at least parts of one criterion to the fullest. For the ones around twelve, it is to assume that they are executable, since it counts as a sixth of the total score, but at the same time are short and vulnerable. Taking a look at the opposite side of the chart, there is nothing that fulfils a score of a 100, nor is a score close to it. This can be based on the issue of taking the file length too much into account as a valuable source, as explained in the contribution part \ref{sec:calculation_of_score} the file length of 300 as a reference for a "docker-compose" based deployment script might be too much and this unfolds in the chart, since there is a cluster around 74, which will fulfil almost all criteria to the fullest except the file length. For future work, this could be changed to the file size, since the file size brings more value compared to the file length. Taking a look at the 180,000 crawled deployment scripts the median of the file length amounts to 22 and even taking the median of the upper part still amounts to 45, meaning that more than 75\% are smaller or equal to the file length of 45. On the other hand, taking the file size into account it shows a median of 438 for the 180,000 scripts. This median would have been much more suitable for the score and could be used as a replacement for the file length. Nevertheless, since the file length only accounted for a sixth of the total score and in general has less significance for the value of its content, the score itself and the distribution shown in chart \ref{fig:deployment_score} are still valid and express the importance of the contents of a single deployment script.
+The figure \ref{fig:deployment_score} shows the score distribution between 0 and 100, where 100 is the best possible score. The X-Axis represents the scores and the Y-Axis are the total amount of occurred scores. The chart shows that there are clusters around score 24, 54 and 74, indicated by the arrows, which could be explained through the split of the score in four criteria. Some of those criteria are more variable compared to others, e.g. executable is either a true or false and, thereby, contributes either fully or not at all to the score. Taking this fact into account, it's interesting to see that there is no score below twelve, which means that every evaluated deployment script fulfils at least parts of one criterion to the fullest. For the ones around twelve, it is to assume that they are executable, since it counts as a sixth of the total score, but at the same time are short and vulnerable. Taking a look at the opposite side of the chart, there is nothing that fulfils a score of a 100, nor is a score close to it. This can be based on the issue of taking the file length too much into account as a valuable source, as explained in the contribution part \ref{sec:calculation_of_score} the file length of 300 as a reference for a "docker-compose" based deployment script might be too much and this unfolds in the chart, since there is a cluster around 74, which will fulfil almost all criteria to the fullest except the file length. For future work, this could be changed to the file size, since the file size brings more value compared to the file length. Taking a look at the 180,000 crawled deployment scripts the median of the file length amounts to 22 and even taking the median of the upper part still amounts to 45, meaning that more than 75\% are smaller or equal to the file length of 45. On the other hand, taking the file size into account it shows a median of 438 for the 180,000 scripts. This median would have been much more suitable for the score and could be used as a replacement for the file length. Nevertheless, since the file length only accounted for a sixth of the total score and in general has less significance for the value of its content, the score itself and the distribution shown in chart \ref{fig:deployment_score} are still valid and express the importance of the contents of a single deployment script.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{graphics/deployment_score_normalized.png}
+    \includegraphics[scale=0.4]{graphics/deployment_score_normalized_bw.png}
     \caption{Score distribution normalized}
     \label{fig:deployment_score_normalized}
 \end{figure}
 
-Taking a simplified look at the score distribution in the chart \ref{fig:deployment_score_normalized}, one can see a better picture of the score clusters. For the distribution between the score of 50 and 60, the amount of executable scripts amounts to 99\%, while the total amount of executable files amounts to 56\%. This cluster can be summarized as average but executable, as the deployment script is either fully vulnerable or fully following the best practices or, which is more likely, an average of both criteria.
+Taking a simplified look at the score distribution in the chart \ref{fig:deployment_score_normalized}, one can see a better picture of the score clusters. For the distribution between the score of 50 and 60, indicated by the curly bracket, the amount of executable scripts amounts to 99\%, while the total amount of executable files amounts to 56\%. This cluster can be summarized as average but executable, as the deployment script is either fully vulnerable or fully following the best practices or, which is more likely, an average of both criteria.
 
 The CVSS score is the most variable one and looking at the charts of \ref{fig:deployment_score} and \ref{fig:deployment_score_normalized} explain the values in between those previously mentioned clusters around the score of 24, 54 and 74.
 
@@ -227,12 +227,12 @@ For future works, the criteria of the file length should be replaced with the fi
     \hline
     score & image & tag & base image \\
     \hline
-         78,69 & linuxserver/letsencrypt & latest & alpine \\
-         78,03 & myregistry/simplest-lab & simplestlb, simplestdb, simplestapp & alpine \\
-         77,75 & try-webpack & dev & alpine\\
-         77,70 & aporeto/apobar & crud & ubuntu \\
-         77,53 & python & 3-alpine & alpine\\
-         77,53 & traefik & latest & alpine\\
+         78.69 & linuxserver/letsencrypt & latest & alpine \\
+         78.03 & myregistry/simplest-lab & simplestlb, simplestdb, simplestapp & alpine \\
+         77.75 & try-webpack & dev & alpine\\
+         77.70 & aporeto/apobar & crud & ubuntu \\
+         77.53 & python & 3-alpine & alpine\\
+         77.53 & traefik & latest & alpine\\
     \hline
     \end{tabular}
     \caption{Images with highest scores}
@@ -302,12 +302,12 @@ So far a lot of individual images were covered, but one common usage of "docker-
     \label{self_build_commons}
 \end{table}
 
-In conclusion, the most used databases are relational and the most used programming languages are used for web development. Thereby, one can conclude that in particular "docker-compose" is used a lot in terms of web development. This being supported by the most used miscellaneous image, which was Nginx, a reserve proxy and load balancer. The majority of images uses the latest tag with approximately 35\% of all images, which should be avoided since it hampers the possibility to successfully execute the same file again after a long period. Alpine images only contributing to 3,6\%, which is another indicator for users to reconsider the security of their images.
+In conclusion, the most used databases are relational and the most used programming languages are used for web development. Thereby, one can conclude that in particular "docker-compose" is used a lot in terms of web development. This being supported by the most used miscellaneous image, which was Nginx, a reserve proxy and load balancer. The majority of images uses the latest tag with approximately 35\% of all images, which should be avoided since it hampers the possibility to successfully execute the same file again after a long period. Alpine images only contributing to 3.6\%, which is another indicator for users to reconsider the security of their images.
 
 \section{Network Analysis}
 
 The following will cover the network analysis, since a graph database was used, which can in return be used to generate a graph out of the data and analysed according to social metrics. While GitHub is not a social network in a classical sense, a lot of social aspects are still present, since users can fork repositories or follow the same tutorial, due to which it can happen that the "docker-compose" file contains the same contents and thereby the same SHA hash. If the hash is the same for a deployment, then users and their repositories will be linked respectively, likely causing clusters.
-For the graph visualization, the program Gephi\footnote{https://gephi.org/} was used, which offers various implementations of algorithms already out of the box. The graph layout was done with the OpenOrd implementation, which Martin et al. describe in their paper as suitable for large graphs with a focus on both local and global structure \cite{openOrd}. The OpenOrd layout focuses on bigger communities around the centre of the graph and towards the edge of the graph, smaller communities are arranged.
+For the graph visualization, the program Gephi\footnote{https://gephi.org/} was used, which offers various implementations of algorithms already out of the box. The graph layout was created with the OpenOrd implementation, which Martin et al. describe in their paper as suitable for large graphs with a focus on both local and global structure \cite{openOrd}. The OpenOrd layout focuses on bigger communities around the centre of the graph and towards the edge of the graph, smaller communities are arranged.
 
 \begin{figure}[H]\centering
 \begin{tikzpicture}[spy using outlines={circle,red,magnification=3,size=5cm, connect spies}]
@@ -340,10 +340,62 @@ The figure \ref{fig:community_distribution} shows the distribution of all commun
 \end{figure}
 
 The graph presented in \ref{fig:graph_types} is ranked according to the degree of a node, with the setting the higher the degree the bigger the node. This shall visualize more important nodes compared to others. The colouring scheme is adjusted to the type of node with blue being repositories, orange being deployments and green being users. Looking at the overall graph it visualizes that in general deployments have a higher degree and are thereby linked more, which can also be explained by using the deployment script hash for linking the same nodes together. Nodes with a high degree and of type user are sort of super users with a lot of repositories and deployments. While a big node of type repository visualizes a super repository that contains a lot of deployment scripts.
-The zoom in the figure \ref{fig:graph_types} shows the biggest repository, user, and deployment script.
+The zoom in the figure \ref{fig:graph_types} shows the biggest repository, user, and deployment script, which can be found in a top 5 in tables \ref{table_top_users}, \ref{table_top_deployments}, and \ref{table_top_repositories}.
 1614 deployment script does the repository contain and is by far the biggest one containing more than 1308 deployment scripts than the second biggest repository. Further analysing the repository shows that the GitHub repository\footnote{https://github.com/vsplate/dcenvs} is used as a data store for a website\footnote{https://www.vsplate.com/} that allows running any "docker-compose" file remotely, thereby, explaining the high degree, since it is used as an active store for "docker-compose" files.
 The biggest deployment script has 881 repositories linking to it and is embedded in a Github repository\footnote{https://github.com/knex/knex}, which is a popular implementation of an SQL query builder for Node.js.
 GitHub sees users and organisations as the same entity and, thereby, the user\footnote{https://github.com/crowdbotics-apps} with the highest degree has 459 repositories and is a service that offers a construction kit for apps, by offering a web service, that allows doing so in the web browser. This would explain the high degree of repositories since each individual app is its own repository.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |c|c|c| }
+    \hline
+    User & Degree \\
+    \hline
+         crowdbotics-apps & 459\\
+         cs2b01 & 102\\
+         munich & 73\\
+         PacktPublishing & 70\\
+         crowdbotics-users & 66\\
+    \hline
+    \end{tabular}
+    \caption{Top 5 - Users with highest degree}
+    \label{table_top_users}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |c|c|c| }
+    \hline
+    Repository & Degree \\
+    \hline
+         dcenvs & 1614\\
+         rancher-catalog-xxl & 306\\
+         camptocamp-rancher-catalog & 213\\
+         eea.rancher.catalog & 211\\
+         dockerfiles & 92\\
+    \hline
+    \end{tabular}
+    \caption{Top 5 - Repositories with highest degree}
+    \label{table_top_repositories}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ |c|c|c| }
+    \hline
+    FileName & Degree \\
+    \hline
+         docker-compose.yml & 881\\
+         docker-compose.yml & 800\\
+         docker-compose.yml & 626\\
+         docker-compose.yml & 565\\
+         docker-compose.yml & 543\\
+    \hline
+    \end{tabular}
+    \caption{Top 5 - Deployment with highest degree}
+    \label{table_top_deployments}
+\end{table}
+
 
 \begin{figure}[H]\centering
 \begin{tikzpicture}[spy using outlines={circle,red,magnification=3,size=5cm, connect spies}]
@@ -357,7 +409,7 @@ GitHub sees users and organisations as the same entity and, thereby, the user\fo
 
 Overlaying both figures \ref{fig:graph_communities} and \ref{fig:graph_types} in figure \ref{fig:graph_merged} shows that communities are fairly often gathered around nodes with a high degree. While none of the biggest users, repository, or deployment scripts are in the biggest communities. It is also visible that the entities in those communities are much smaller compared to other communities, which leads to those communities being sparsely connected since there is not one main anchor to connect all nodes of the community. Another feature that is visible is, that outside of the core all remaining smaller communities are visible and none of those have a high degree node connecting them. The majority of the communities are small and surrounding the core of approximately 100 bigger communities.
 
-The so-called small world problem can be seen in this graph as well if the graph is interpreted as a directed graph. Stanley Milgram describes in the paper about the small world problem, that if one takes two random people out of the population of the United States, how long would be the chain of mutual acquaintances? \cite{SmallWorld}. To figure out whether a small world problem exists, one uses the average path length, since it describes the average path from two nodes within a community. The graph in figure \ref{fig:graph_communities} has a diameter of 2 with an average path length of 1.3 indicating that a small world problem exists within each community. This can be explained by the communities always being connected by at most 2 hops between nodes since the system consists of only 3 types of nodes and the deployment script being the most connected one. While the small world problem is applicable within communities, it is not applicable for the whole graph, as the graph is not well connected overall. Another indicator that the small world problem does not exist in the overall graph is the average clustering coefficient, which Watts describes in his article about the "Collective dynamics of 'small-world' networks" \cite{Watts1998Collective} how complete a node's neighbourhood is, also often called a clique. In this case, the average cluster coefficient is 0, since there are no connections between users or even between other repositories.
+The so-called small world problem can be seen in this graph as well if the graph is interpreted as a directed graph. Stanley Milgram describes in the paper about the small world problem, that if one takes two random people out of the population of the United States, how long would be the chain of mutual acquaintances \cite{SmallWorld} ?. To figure out whether a small world problem exists, one uses the average path length, since it describes the average path from two nodes within a community. The graph in figure \ref{fig:graph_communities} has a diameter of 2 with an average path length of 1.3 indicating that a small world problem exists within each community. This can be explained by the communities always being connected by at most 2 hops between nodes since the system consists of only 3 types of nodes and the deployment script being the most connected one. While the small world problem is applicable within communities, it is not applicable for the whole graph, as the graph is not well connected overall. Another indicator that the small world problem does not exist in the overall graph is the average clustering coefficient, which Watts describes in his article about the "Collective dynamics of 'small-world' networks" \cite{Watts1998Collective} how complete a node's neighbourhood is, also often called a clique. In this case, the average cluster coefficient is 0, since there are no connections between users or even between other repositories.
 
 To summarize, the presented graph, derived by the data crawled from GitHub, is not a social graph in a typical way, but still shows interesting characteristics, which are worth analysing. While the general analysis brought forward quantitative metrics based on the crawled data, about e.g. the top used images and their versions, the graph analysis brought forward interesting graphical interpretations. It showed big communities, which can be narrowed down to a specific deployment script and, thereby, the origin of those and how users across GitHub are consuming those, e.g. by trying to learn more about Docker or the implicit popularity of an NPM library. On the other hand, one can identify repositories, which are used as data storage to run a commercial products around it, in this case, a "docker-compose" as a service. Even users and their business ideas are identifiable, in the case of the app builder, which uses GitHub to house their applications. While the main idea of the graph database is to use it to recommend "docker-compose" files according to user-defined metrics, it is still interesting to see how "docker-compose" is used across the community and especially around GitHub as a product itself. This would not have been possible without the additional graph analysis and the possibility of visualizing such things. Further on this could be extended in the future to recommend other interesting metrics, such as tutorials or libraries, since an implicit popularity rating can be derived by the number of usages across the GitHub community. Although this is a manual process, it can be further automated by analysing the user/organizations profiles itself or the repositories the files are hosted in.
 \label{sec:futureDocker}
